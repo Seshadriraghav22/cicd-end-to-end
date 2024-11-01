@@ -1,5 +1,4 @@
 pipeline {
-    
     agent any 
     
     environment {
@@ -7,40 +6,39 @@ pipeline {
     }
     
     stages {
-        
-        stage('Checkout'){
-           steps {
+        stage('Checkout') {
+            steps {
                 git credentialsId: 'github', 
                 url: 'https://github.com/Seshadriraghav22/cicd-end-to-end.git',
                 branch: 'main'
-           }
+            }
         }
 
-        stage('Build Docker'){
-            steps{
-                script{
+        stage('Build Docker') {
+            steps {
+                script {
                     sh '''
-                    echo 'Buid Docker Image'
-                    docker build -t seshadriraghav22/cicd-e2e:${BUILD_NUMBER} .
+                    echo 'Building Docker Image'
+                    docker build -t seshadriraghav22/cicd-e2e:${IMAGE_TAG} .
                     '''
                 }
             }
         }
 
-        stage('Push the artifacts'){
-           steps{
-                script{
-                    docker.withRegistry('https://registry.hub.docker.com', 'dochub'){
-                      sh '''
-                        echo 'Push to Repo'
-                        docker push seshadriraghav22/cicd-e2e:${BUILD_NUMBER}
-                      '''
+        stage('Push the artifacts') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dochub') {
+                        sh '''
+                        echo 'Pushing to Docker Hub'
+                        docker push seshadriraghav22/cicd-e2e:${IMAGE_TAG}
+                        '''
                     }
                 }
             }
         }
-        
-        stage('Checkout K8S manifest SCM'){
+
+        stage('Checkout K8S manifest SCM') {
             steps {
                 git credentialsId: 'github', 
                 url: 'https://github.com/Seshadriraghav22/cicd-end-to-end.git',
@@ -48,18 +46,19 @@ pipeline {
             }
         }
         
-        stage('Update K8S manifest & push to Repo'){
+        stage('Update K8S manifest & push to Repo') {
             steps {
-                script{
-                    withCredentials([string(credentialsId: 'github')]) {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
                         sh '''
-                        cat deploy.yaml
-                        sed -i '' "s/32/${BUILD_NUMBER}/g" deploy.yaml
-                        cat deploy.yaml
+                        echo 'Updating K8S manifest'
+                        sed -i "s/32/${IMAGE_TAG}/g" deploy.yaml
+                        git config --global user.email "you@example.com"
+                        git config --global user.name "${GITHUB_USER}"
                         git add deploy.yaml
                         git commit -m 'Updated the deploy yaml | Jenkins Pipeline'
-                        git remote -v
-                        git push https://github.com/Seshadriraghav22/cicd-end-to-end.git HEAD:main
+                        git remote set-url origin https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/Seshadriraghav22/cicd-end-to-end.git
+                        git push origin main
                         '''                        
                     }
                 }
