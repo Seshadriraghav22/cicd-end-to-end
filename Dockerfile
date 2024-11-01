@@ -6,7 +6,8 @@ RUN apt-get update && apt-get install -y python3-distutils && apt-get clean
 # Set the working directory
 WORKDIR /app
 
-# Copy the requirements file first to leverage Docker caching
+# Copy the requirements file if you have one
+# If you don't have a requirements.txt file, you can skip this line for now
 COPY requirements.txt .
 
 # Install dependencies
