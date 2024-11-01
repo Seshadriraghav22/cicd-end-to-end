@@ -4,7 +4,7 @@ FROM python:3.10
 RUN apt-get update && apt-get install -y python3-distutils && apt-get clean
 
 # Set the working directory
-WORKDIR /app
+WORKDIR /app 
 
 # Copy the requirements file if available
 COPY requirements.txt .
