@@ -44,8 +44,8 @@ pipeline {
                       withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
                         sh '''
                         echo 'Updating K8S manifest'
-                        sed -i "s/32/${IMAGE_TAG}/g" deploy.yaml
-                        git config --global user.email "you@example.com"
+                        sed -i "s/32/${IMAGE_TAG}/g" deploy/deploy.yaml
+                        git config --global user.email "seshadriraghav24@gmail.com"
                         git config --global user.name "${GITHUB_USER}"
                         git add deploy.yaml
                         git commit -m 'Updated the deploy yaml | Jenkins Pipeline'
