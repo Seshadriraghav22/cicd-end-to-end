@@ -47,7 +47,7 @@ pipeline {
         stage('Update K8S manifest & push to Repo') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                    withCredentials([usernamePassword(credentialsId: 'github',variable: 'GITHUB_TOKEN')]) {
                         sh '''
                         echo 'Updating K8S manifest'
                         sed -i "s/32/${IMAGE_TAG}/g" deploy.yaml
@@ -55,7 +55,7 @@ pipeline {
                         git config --global user.name "${GITHUB_USER}"
                         git add deploy.yaml
                         git commit -m 'Updated the deploy yaml | Jenkins Pipeline'
-                        git remote set-url origin https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/Seshadriraghav22/cicd-end-to-end.git
+                        git remote set-url origin https://:${GITHUB_TOKEN}@github.com/Seshadriraghav22/cicd-end-to-end.git
                         git push origin main
                         '''                        
                     }
