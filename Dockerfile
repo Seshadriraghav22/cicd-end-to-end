@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.10
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y python3-distutils && apt-get clean
@@ -6,12 +6,11 @@ RUN apt-get update && apt-get install -y python3-distutils && apt-get clean
 # Set the working directory
 WORKDIR /app
 
-# Copy the requirements file if you have one
-# If you don't have a requirements.txt file, you can skip this line for now
+# Copy the requirements file if available
 COPY requirements.txt .
 
 # Install dependencies
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the application code
 COPY . .
