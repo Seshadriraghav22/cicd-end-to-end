@@ -44,7 +44,7 @@ pipeline {
                       withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
                         sh '''
                         echo 'Updating K8S manifest'
-                        sed -i '' "s/rk/${BUILD_NUMBER}/g" deploy/deploy.yaml
+                        sed -i "s/:rk/:${BUILD_NUMBER}/g" deploy/deploy.yaml
                         git config --global user.email "seshadriraghav24@gmail.com"
                         git config --global user.name "Seshadriraghav22"
                         git add deploy/deploy.yaml
