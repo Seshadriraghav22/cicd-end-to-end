@@ -6,8 +6,11 @@ RUN apt-get update && apt-get install -y python3-distutils && apt-get clean
 # Set the working directory
 WORKDIR /app
 
-# Install Django
-RUN pip install django==3.2
+# Copy the requirements file first to leverage Docker caching
+COPY requirements.txt .
+
+# Install dependencies
+RUN pip install -r requirements.txt
 
 # Copy the application code
 COPY . .
