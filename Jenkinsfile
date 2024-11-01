@@ -14,29 +14,27 @@ pipeline {
             }
         }
 
-        stage('Build Docker') {
+       stage('Docker Image') {
             steps {
-                script {
-                    sh '''
-                    echo 'Building Docker Image'
-                    docker build -t seshadriraghav22/cicd-e2e:${IMAGE_TAG} .
-                    '''
-                }
-            }
-        }
+				script{
+					app = docker.build("seshadriraghav22/cicd-e2e")
+					app.inside{
+					  sh 'echo $(curl localhost:8080)'
+					}
+				}
 
-        stage('Push the artifacts') {
-            steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'dochub') {
-                        sh '''
-                        echo 'Pushing to Docker Hub'
-                        docker push seshadriraghav22/cicd-e2e:${IMAGE_TAG}
-                        '''
-                    }
-                }
             }
         }
+        stage('Push Docker Image') {
+            steps {
+				script{		
+					docker.withRegistry('https://registry.hub.docker.com', 'dochub') {
+					   app.push("${env.BUILD_NUMBER}")
+					   app.push("latest")
+					}
+				}
+			}
+								
 
         stage('Checkout K8S manifest SCM') {
             steps {
