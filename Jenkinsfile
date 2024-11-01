@@ -36,13 +36,7 @@ pipeline {
             }
         }
 
-        stage('Checkout K8S manifest SCM') {
-            steps {
-                git credentialsId: 'github', 
-                url: 'https://github.com/Seshadriraghav22/cicd-end-to-end.git',
-                branch: 'main'
-            }
-        }
+       
         
         stage('Update K8S manifest & push to Repo') {
             steps {
