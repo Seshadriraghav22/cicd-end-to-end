@@ -41,7 +41,7 @@ pipeline {
         stage('Update K8S manifest & push to Repo') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'github')]) {
+                      withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
                         sh '''
                         echo 'Updating K8S manifest'
                         sed -i "s/32/${IMAGE_TAG}/g" deploy.yaml
